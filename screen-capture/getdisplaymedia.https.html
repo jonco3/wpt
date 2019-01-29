@@ -35,6 +35,7 @@ const j = obj => JSON.stringify(obj);
  {video: {height: {exact: 240}}},
  {video: {frameRate: {min: 4}}},
  {video: {frameRate: {exact: 4}}},
+ {audio: true},
 ].forEach(constraints => promise_test(async t => {
   try {
     stopTracks(await navigator.mediaDevices.getDisplayMedia(constraints));
@@ -47,15 +48,13 @@ const j = obj => JSON.stringify(obj);
 
 [
  {video: true, audio: true},
- {audio: true},
 ].forEach(constraints => promise_test(async t => {
   const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
   t.add_cleanup(() => stopTracks(stream));
-  assert_greater_than_equal(stream.getTracks().length, 1);
-  assert_less_than_equal(stream.getTracks().length, 2);
+  assert_equals(stream.getTracks().length, 2);
   assert_equals(stream.getVideoTracks().length, 1);
-  assert_less_than_equal(stream.getAudioTracks().length, 1);
-}, `getDisplayMedia(${j(constraints)}) must succeed with video maybe audio`));
+  assert_equals(stream.getAudioTracks().length, 1);
+}, `getDisplayMedia(${j(constraints)}) must succeed with video and audio`));
 
 [
  {video: {width: {max: 360}}},
