@@ -169,37 +169,12 @@ jobs:
   displayName: 'all tests (Edge)'
   #condition: eq(variables['Build.Reason'], 'Schedule')
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/foolip/azure-full-edge')
-  strategy:
-    parallel: 20 # there are 5 agents, but use more chunks
   timeoutInMinutes: 360
   pool:
     name: 'Hosted Windows Client'
   steps:
   - template: tools/ci/azure/system_info.yml
-  - template: tools/ci/azure/checkout.yml
-  - template: tools/ci/azure/install_python.yml
-  - template: tools/ci/azure/pip_install.yml
-    parameters:
-      packages: virtualenv
-  - template: tools/ci/azure/install_certs.yml
-  - template: tools/ci/azure/update_hosts.yml
-  - template: tools/ci/azure/update_manifest.yml
-  - script: python ./wpt run --no-manifest-update --no-restart-on-unexpected --no-fail-on-unexpected --install-fonts --test-types reftest testharness --this-chunk $(System.JobPositionInPhase) --total-chunks $(System.TotalJobsInPhase) --chunk-type hash --log-wptreport $(Build.ArtifactStagingDirectory)/wpt_report_$(System.JobPositionInPhase).json edge_webdriver
-    displayName: 'Run tests'
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish results'
-    inputs:
-      artifactName: 'results-edge'
-    condition: succeededOrFailed()
-  - powershell: |
-      $hostFile = "$env:systemroot\System32\drivers\etc\hosts"
-      Copy-Item -Path "$hostFile.back" -Destination $hostFile -Force
-      taskkill /f /im MicrosoftEdge*
-      taskkill /f /im MicrosoftWebDriver.exe
-    displayName: 'Restore hosts file and cleanup test machine'
-    condition: always()
-    errorActionPreference: silentlyContinue
-    ignoreLASTEXITCODE: true
+  - powershell: MicrosoftWebDriver --version
 
 - job: all_macOS
   displayName: 'all tests (Safari Technology Preview)'
