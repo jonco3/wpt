@@ -175,7 +175,7 @@ jobs:
   steps:
   - checkout: none
   - template: tools/ci/azure/system_info.yml
-  - powershell: MicrosoftWebDriver --version
+  - powershell: MicrosoftEdge --version
 
 - job: all_macOS
   displayName: 'all tests (Safari Technology Preview)'
